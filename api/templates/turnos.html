@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Sistema de Reservas</title>
     <link rel="stylesheet" href="/static/style.css">
-    <script>
-        async function cancelarTurno(id) {
-            if(!confirm("¿Desea eliminar este turno?")) return;
-            await fetch(`/turnos/${id}`, { method: 'DELETE' });
-            location.reload();
-        }
-    </script>
 </head>
 <body>
-    <h1>Sistema de Reservas</h1>
-
-    <form action="/agregar_turno" method="post">
-        <label>Usuario ID: <input type="number" name="usuario_id" required></label>
-        <label>Fecha y Hora: <input type="datetime-local" name="fecha_hora" required></label>
+    <h1>Reservas</h1>
+    {% if error %}
+    <p style="color:red">{{ error }}</p>
+    {% endif %}
+    <form method="post" action="/turnos">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="date" name="fecha" required>
         <button type="submit">Agregar Turno</button>
     </form>
 
@@ -24,20 +20,22 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Fecha/Hora</th>
-                <th>Usuario ID</th>
-                <th>Acción</th>
+                <th>Nombre</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for turno in turnos %}
+        {% for t in turnos %}
             <tr>
-                <td>{{ turno.id }}</td>
-                <td>{{ turno.fecha_hora }}</td>
-                <td>{{ turno.usuario_id }}</td>
-                <td><button onclick="cancelarTurno({{ turno.id }})">Cancelar</button></td>
+                <td>{{ t.id }}</td>
+                <td>{{ t.nombre }}</td>
+                <td>{{ t.fecha }}</td>
+                <td>
+                    <a href="/turnos/delete/{{ t.id }}">Eliminar</a>
+                </td>
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
 </body>
