@@ -1,33 +1,42 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from datetime import datetime
 
-app = FastAPI(title="Sistema de Turnos")
+app = FastAPI()
 
-# Modelo en memoria (sin base de datos todavía)
-class Turno(BaseModel):
-    id: int
-    nombre: str
-    fecha: str
-    hora: str
+# Carpeta de templates
+templates = Jinja2Templates(directory="templates")
 
-# Lista de turnos en memoria
-turnos: List[Turno] = []
+# Carpeta de archivos estáticos (CSS)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/")
-def root():
-    return {"message": "Sistema de Turnos activo 🚀"}
+# Lista en memoria para guardar los turnos
+turnos = []
 
-@app.get("/turnos")
-def listar_turnos():
-    return turnos
+# Página principal
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos})
 
-@app.post("/turnos")
-def crear_turno(turno: Turno):
-    # Validar duplicados por fecha y hora
-    for t in turnos:
-        if t.fecha == turno.fecha and t.hora == turno.hora:
-            return {"error": "Ese turno ya está reservado ❌"}
-    turnos.append(turno)
-    return {"ok": "Turno reservado ✅", "turno": turno}
+# Agregar un turno
+@app.post("/agregar_turno", response_class=HTMLResponse)
+async def agregar_turno(
+    request: Request,
+    nombre: str = Form(...),
+    fecha: str = Form(...),
+    hora: str = Form(...)
+):
+    try:
+        turno = {
+            "nombre": nombre.upper(),
+            "fecha": fecha,
+            "hora": hora,
+            "confirmado": True
+        }
+        turnos.append(turno)
+        mensaje = f"Turno para {nombre.upper()} confirmado!"
+    except Exception as e:
+        mensaje = f"Error al agregar turno: {str(e)}"
+    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos, "mensaje": mensaje})
