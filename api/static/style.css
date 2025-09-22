@@ -1,63 +1,79 @@
 body { 
     font-family: Arial, sans-serif; 
-    background: #1f2937; /* fondo oscuro para contraste */
-    color: #f8f9fa; /* texto claro */
+    background: #f3f1e7; /* fondo claro tipo madera */
+    color: #333; 
     margin: 20px; 
 }
 
 .container { 
-    max-width: 800px; 
+    max-width: 900px; 
     margin: auto; 
-    background: #111827; /* contenedor más oscuro */
-    padding: 20px; 
-    border-radius: 10px; 
-    box-shadow: 0 0 20px rgba(0,0,0,0.5); 
+    background: #d4c3a8; /* contenedor madera clara */
+    padding: 25px; 
+    border-radius: 12px; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.3); 
 }
 
-h1 { text-align: center; color: #e0f2fe; }
+h1 { 
+    text-align: center; 
+    color: #4b3621; /* marrón oscuro para contraste */ 
+    text-transform: uppercase;
+}
 
 input, button { 
-    padding: 10px; 
+    padding: 12px; 
     margin: 5px; 
-    border-radius: 5px; 
-    border: 1px solid #ccc; 
+    border-radius: 6px; 
+    border: 1px solid #aaa; 
+    text-transform: uppercase;
 }
 
 button { 
-    background-color: #3b82f6; 
+    background-color: #6b4f33; 
     color: white; 
     border: none; 
     cursor: pointer; 
 }
 
-button:hover { background-color: #2563eb; }
+button:hover { 
+    background-color: #4b3621; 
+}
 
-.error { color: #f87171; text-align: center; }
+.error { 
+    color: #ff4d4d; 
+    text-align: center; 
+}
 
 table { 
     width: 100%; 
     border-collapse: collapse; 
     margin-top: 20px; 
-    background: #1e293b; /* tabla ligeramente más clara */
+    background: #c9b79c; /* madera clara para tabla */
 }
 
 th, td { 
-    padding: 10px; 
+    padding: 15px; /* celdas más amplias */
     text-align: center; 
-    border: 1px solid #334155; 
+    border: 1px solid #a68a6b; 
+    text-transform: uppercase; /* letras en mayúsculas */
 }
 
-tr:nth-child(even) { background-color: #111827; }
-tr:hover { background-color: #334155; }
+tr:nth-child(even) { background-color: #e0d8c3; }
+tr:hover { background-color: #d1c1a2; }
 
-th { background-color: #3b82f6; color: white; }
+th { 
+    background-color: #8b5e3c; 
+    color: white; 
+}
 
 .delete-btn { 
     color: white; 
-    background-color: #ef4444; 
-    padding: 5px 10px; 
+    background-color: #d14343; 
+    padding: 6px 12px; 
     border-radius: 5px; 
     text-decoration: none; 
 }
 
-.delete-btn:hover { background-color: #b91c1c; }
+.delete-btn:hover { 
+    background-color: #a83232; 
+}
