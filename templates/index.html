@@ -1,38 +1,41 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Sistema de Turnos</title>
     <style>
-        table {border-collapse: collapse; width: 100%;}
-        th, td {border: 1px solid #ddd; padding: 8px;}
-        th {background-color: #f2f2f2;}
+        table { border-collapse: collapse; width: 50%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
-    <h1>Sistema de Turnos</h1>
+<h1>Turnos</h1>
 
-    <h2>Agregar Turno</h2>
-    <form action="/turnos/agregar" method="post">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="datetime-local" name="fecha" required>
-        <button type="submit">Agregar</button>
-    </form>
+<form action="/agregar-turno" method="post">
+    Nombre: <input type="text" name="nombre" required>
+    Email: <input type="email" name="email" required>
+    Fecha y hora: <input type="datetime-local" name="fecha_hora" required>
+    <button type="submit">Agregar Turno</button>
+</form>
 
-    <h2>Turnos</h2>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Fecha y Hora</th>
-        </tr>
+<h2>Lista de Turnos</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Fecha y Hora</th>
+    </tr>
+    {% if turnos %}
         {% for turno in turnos %}
-        <tr>
-            <td>{{ turno.id }}</td>
-            <td>{{ turno.nombre }}</td>
-            <td>{{ turno.fecha.strftime("%Y-%m-%d %H:%M") }}</td>
-        </tr>
+            <tr>
+                <td>{{ turno.id }}</td>
+                <td>{{ turno.nombre }}</td>
+                <td>{{ turno.email }}</td>
+                <td>{{ turno.fecha_hora }}</td>
+            </tr>
         {% endfor %}
-    </table>
+    {% endif %}
+</table>
 </body>
 </html>
