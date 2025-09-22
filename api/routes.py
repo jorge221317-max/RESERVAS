@@ -1,24 +1,31 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import RedirectResponse
-from .models import Turno, SessionLocal
-import datetime
+from sqlalchemy.orm import Session
+from api.models import SessionLocal, Turno
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
+templates = Jinja2Templates(directory="templates")
 
-@router.get("/turnos")
-async def listar_turnos(request: Request):
+# Obtener sesión de DB
+def get_db():
     db = SessionLocal()
-    turnos = db.query(Turno).all()
-    db.close()
-    return {"turnos": [{"id": t.id, "nombre": t.nombre, "fecha_hora": t.fecha_hora} for t in turnos]}
+    try:
+        yield db
+    finally:
+        db.close()
 
-@router.post("/turnos")
-async def agregar_turno(nombre: str = Form(...), fecha_hora: str = Form(...)):
-    db = SessionLocal()
-    dt = datetime.datetime.fromisoformat(fecha_hora)
-    nuevo_turno = Turno(nombre=nombre, fecha_hora=dt)
+@router.post("/agregar-turno")
+async def agregar_turno(request: Request, nombre: str = Form(...), email: str = Form(...), fecha_hora: str = Form(...)):
+    db: Session = next(get_db())
+    nuevo_turno = Turno(nombre=nombre, email=email, fecha_hora=fecha_hora)
     db.add(nuevo_turno)
     db.commit()
     db.refresh(nuevo_turno)
-    db.close()
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse("/", status_code=303)
+
+@router.get("/turnos")
+async def ver_turnos(request: Request):
+    db: Session = next(get_db())
+    turnos = db.query(Turno).all()
+    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos})
