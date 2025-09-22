@@ -1,16 +1,11 @@
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, MetaData, Table
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import declarative_base
 
-DATABASE_URL = "sqlite:///./turnos.db"
+Base = declarative_base()
 
-metadata = MetaData()
+class Turno(Base):
+    __tablename__ = "turnos"
 
-turnos = Table(
-    "turnos",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("nombre", String, nullable=False),
-    Column("fecha_hora", DateTime, nullable=False)
-)
-
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-metadata.create_all(engine)
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String, index=True)
+    fecha_hora = Column(DateTime, index=True)
