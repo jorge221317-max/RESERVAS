@@ -5,4 +5,4 @@ class Turno(Base):
     __tablename__ = "turnos"
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, index=True)
-    fecha = Column(String)
+    fecha_hora = Column(String)  # guardar fecha y hora como texto
