@@ -1,25 +1,33 @@
 body {
     font-family: Arial, sans-serif;
-    background: url('wood_texture.jpg'); /* descargas la textura madera en static */
-    background-size: cover;
-    color: #000;
-    text-transform: uppercase;
+    margin: 20px;
+    background: #f7f7f7;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
 }
 
 table {
+    width: 100%;
     border-collapse: collapse;
-    width: 80%;
-    margin: 20px auto;
-    background-color: rgba(255,255,255,0.8);
+    text-align: center;
+    background: #deb887; /* fondo tipo madera */
 }
 
 th, td {
     border: 1px solid #000;
     padding: 10px;
-    text-align: center;
-}
-
-button {
-    padding: 5px 10px;
-    cursor: pointer;
+    text-transform: uppercase;
 }
