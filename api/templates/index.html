@@ -1,43 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Sistema de Turnos</title>
-<link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Turnos</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<h1>Sistema de Turnos 🚀</h1>
-
-<form action="/agregar_turno" method="post">
-    <input type="text" name="nombre" placeholder="Nombre" required>
-    <input type="date" name="fecha" required>
-    <input type="time" name="hora" required>
-    <button type="submit">Agregar Turno</button>
-</form>
-
-{% if mensaje %}
-<p>{{ mensaje }}</p>
-{% endif %}
-
-<table>
-    <thead>
-        <tr>
-            <th>NOMBRE</th>
-            <th>FECHA</th>
-            <th>HORA</th>
-            <th>CONFIRMADO</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for t in turnos %}
-        <tr>
-            <td>{{ t.nombre }}</td>
-            <td>{{ t.fecha }}</td>
-            <td>{{ t.hora }}</td>
-            <td>{{ t.confirmado }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h1>Lista de Turnos</h1>
+    <form method="post" action="/turno">
+        Nombre: <input type="text" name="nombre" required>
+        Fecha: <input type="date" name="fecha" required>
+        Hora: <input type="time" name="hora" required>
+        <button type="submit">Agregar Turno</button>
+    </form>
+    <table border="1">
+        <thead style="background-color: #d2b48c; text-transform: uppercase;">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for turno in turnos %}
+            <tr>
+                <td>{{ turno.id }}</td>
+                <td>{{ turno.nombre }}</td>
+                <td>{{ turno.fecha }}</td>
+                <td>{{ turno.hora }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
