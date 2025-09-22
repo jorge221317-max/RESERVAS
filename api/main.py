@@ -1,17 +1,15 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from . import routes  # importa tus rutas
+from .routes import router as routes_router
 
-app = FastAPI()
+app = FastAPI(title="API de Reservas 🚀")
 
-# Montar carpeta static (ajusta si tu static está dentro de api/)
+# Montar carpeta static
 app.mount("/static", StaticFiles(directory="api/static"), name="static")
 
-# Endpoint raíz para test rápido
-@app.get("/")
-def root():
-    return {"message": "API de Reservas funcionando 🚀"}
+# Incluir rutas
+app.include_router(routes_router)
 
-# Incluir rutas si tus rutas están definidas correctamente
-# routes.py debe tener `router = APIRouter()` y tus endpoints
-app.include_router(routes.router)
+@app.get("/")
+async def root():
+    return {"message": "API de Reservas funcionando 🚀"}
