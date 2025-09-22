@@ -1,45 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Reservas</title>
-    <link rel="stylesheet" href="/static/css/estilos.css">
+    <meta charset="UTF-8">
+    <title>Sistema de Turnos</title>
+    <style>
+        table {border-collapse: collapse; width: 100%;}
+        th, td {border: 1px solid #ddd; padding: 8px;}
+        th {background-color: #f2f2f2;}
+    </style>
 </head>
 <body>
-    <h1>Reservas de Turnos</h1>
+    <h1>Sistema de Turnos</h1>
 
-    <form action="/reservar" method="post">
+    <h2>Agregar Turno</h2>
+    <form action="/turnos/agregar" method="post">
         <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="date" name="fecha" required>
-        <input type="time" name="hora" required>
-        <button type="submit">Reservar</button>
+        <input type="datetime-local" name="fecha" required>
+        <button type="submit">Agregar</button>
     </form>
 
-    <h2>Turnos confirmados</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>NOMBRE</th>
-                <th>FECHA</th>
-                <th>HORA</th>
-            </tr>
-        </thead>
-        <tbody id="turnos-table">
-            <!-- Será llenado desde FastAPI -->
-        </tbody>
+    <h2>Turnos</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Fecha y Hora</th>
+        </tr>
+        {% for turno in turnos %}
+        <tr>
+            <td>{{ turno.id }}</td>
+            <td>{{ turno.nombre }}</td>
+            <td>{{ turno.fecha.strftime("%Y-%m-%d %H:%M") }}</td>
+        </tr>
+        {% endfor %}
     </table>
-
-    <script>
-        async function cargarTurnos() {
-            const res = await fetch("/turnos");
-            const data = await res.json();
-            const tbody = document.getElementById("turnos-table");
-            tbody.innerHTML = "";
-            data.turnos.forEach(t => {
-                const row = `<tr><td>${t.nombre}</td><td>${t.fecha}</td><td>${t.hora}</td></tr>`;
-                tbody.innerHTML += row;
-            });
-        }
-        cargarTurnos();
-    </script>
 </body>
 </html>
