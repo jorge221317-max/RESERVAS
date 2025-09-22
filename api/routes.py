@@ -1,24 +1,16 @@
-from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from datetime import datetime
-from .database import database
-from .models import turnos
+from fastapi import APIRouter, Request, Form
+from fastapi.responses import RedirectResponse
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
-@router.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    query = turnos.select()
-    resultados = await database.fetch_all(query)
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": resultados})
+# Lista simple de turnos en memoria
+turnos = []
 
-@router.post("/reservar", response_class=HTMLResponse)
-async def reservar_turno(request: Request, nombre: str = Form(...), fecha_hora: str = Form(...)):
-    fecha = datetime.fromisoformat(fecha_hora)
-    query = turnos.insert().values(nombre=nombre, fecha_hora=fecha)
-    await database.execute(query)
-    query = turnos.select()
-    resultados = await database.fetch_all(query)
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": resultados, "mensaje": "Turno confirmado!"})
+@router.post("/reservar")
+async def reservar_turno(nombre: str = Form(...), fecha: str = Form(...), hora: str = Form(...)):
+    turnos.append({"nombre": nombre, "fecha": fecha, "hora": hora})
+    return RedirectResponse(url="/", status_code=303)
+
+@router.get("/turnos")
+async def listar_turnos():
+    return {"turnos": turnos}
