@@ -1,3 +1,9 @@
-def enviar_mail_reserva(turno):
-    # Placeholder: aquí integrarías un servicio real de envío de mails
-    print(f"Mail enviado: turno {turno.id} reservado el {turno.fecha} a las {turno.hora}")
+from fastapi import FastAPI
+from .routes import router
+
+app = FastAPI(title="API de Reservas 🚀")
+app.include_router(router)
+
+@app.get("/")
+async def root():
+    return {"message": "API de Reservas funcionando 🚀"}
