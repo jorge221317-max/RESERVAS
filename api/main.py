@@ -1,26 +1,17 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from .routes import router
-from .database import init_db, SessionLocal
-from .models import Turno
+from .routes import router as turnos_router
 
 app = FastAPI(title="Sistema de Turnos")
 
-# Inicializar DB
-init_db()
+# Carpeta static y templates
+app.mount("/static", StaticFiles(directory="api/static"), name="static")
+templates = Jinja2Templates(directory="api/templates")
 
-# Static y Templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+# Rutas
+app.include_router(turnos_router)
 
-# Rutas API
-app.include_router(router)
-
-# Página principal con tabla de turnos
 @app.get("/")
-def home(request: Request):
-    db = SessionLocal()
-    turnos = db.query(Turno).order_by(Turno.fecha).all()
-    db.close()
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos})
+async def root():
+    return {"message": "Sistema de Turnos activo 🚀"}
