@@ -1,12 +1,18 @@
-from pydantic import BaseModel
-from datetime import datetime
+from databases import Database
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
-class Turno(BaseModel):
-    id: int
-    fecha: str
-    hora: str
-    reservado: bool = False
+DATABASE_URL = "sqlite:///./turnos.db"
+database = Database(DATABASE_URL)
+metadata = MetaData()
 
-    model_config = {
-        "from_attributes": True  # reemplaza orm_mode
-    }
+turnos = Table(
+    "turnos",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("nombre", String, nullable=False),
+    Column("fecha", String, nullable=False),
+    Column("hora", String, nullable=False),
+)
+
+engine = create_engine(DATABASE_URL)
+metadata.create_all(engine)
