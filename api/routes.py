@@ -31,8 +31,31 @@ def crear_turno(turno: TurnoCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(nuevo_turno)
 
-    # Enviar email de confirmación
     usuario = db.query(Usuario).get(turno.usuario_id)
     enviar_email(usuario.email, "Turno confirmado", f"Tu turno es el {turno.fecha_hora}")
     
     return nuevo_turno
+
+# Listar todos los turnos
+@router.get("/turnos/", response_model=list[TurnoResponse])
+def listar_turnos(db: Session = Depends(get_db)):
+    turnos = db.query(Turno).all()
+    return turnos
+
+# Buscar turnos por usuario
+@router.get("/turnos/buscar/", response_model=list[TurnoResponse])
+def buscar_turnos(usuario_id: int = None, db: Session = Depends(get_db)):
+    query = db.query(Turno)
+    if usuario_id:
+        query = query.filter(Turno.usuario_id == usuario_id)
+    return query.all()
+
+# Eliminar un turno
+@router.delete("/turnos/{turno_id}")
+def eliminar_turno(turno_id: int, db: Session = Depends(get_db)):
+    turno = db.query(Turno).get(turno_id)
+    if not turno:
+        raise HTTPException(status_code=404, detail="Turno no encontrado")
+    db.delete(turno)
+    db.commit()
+    return {"detail": f"Turno {turno_id} eliminado"}
