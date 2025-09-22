@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Turnos</title>
+    <style>
+        body { font-family: Arial; background: #f4f1e0; }
+        table { border-collapse: collapse; width: 80%; margin: auto; background: #deb887; }
+        th, td { padding: 10px; border: 1px solid #000; text-transform: uppercase; }
+        th { background: #d2b48c; }
+        form { margin: 20px auto; width: 80%; display: flex; justify-content: space-around; }
+    </style>
+</head>
+<body>
+<h2 style="text-align:center;">LISTA DE TURNOS</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>NOMBRE</th>
+        <th>FECHA</th>
+        <th>HORA</th>
+    </tr>
+    {% for turno in turnos %}
+    <tr>
+        <td>{{ turno.id }}</td>
+        <td>{{ turno.nombre }}</td>
+        <td>{{ turno.fecha }}</td>
+        <td>{{ turno.hora }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form method="post" action="/turnos">
+    <input type="text" name="nombre" placeholder="Nombre" required>
+    <input type="date" name="fecha" required>
+    <input type="time" name="hora" required>
+    <button type="submit">Crear Turno</button>
+</form>
+</body>
+</html>
