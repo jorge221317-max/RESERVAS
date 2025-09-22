@@ -1,27 +1,11 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-import os
+from . import routes
 
 app = FastAPI()
 
-# 🔹 Detecta la ruta base de este archivo (api/)
-BASE_DIR = os.path.dirname(__file__)
+# Incluir las rutas desde routes.py
+app.include_router(routes.router)
 
-# 🔹 Monta la carpeta static correctamente
-app.mount(
-    "/static",
-    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
-    name="static"
-)
-
-# 🔹 Ejemplo de endpoint raíz
-@app.get("/")
-def read_root():
-    return {"message": "Bienvenido al sistema de reservas 🚀"}
-
-# 🔹 Importar las rutas (si tenés un archivo routes.py)
-try:
-    from . import routes
-    app.include_router(routes.router)
-except ImportError:
-    pass
+# Montar carpeta estática
+app.mount("/static", StaticFiles(directory="api/static"), name="static")
