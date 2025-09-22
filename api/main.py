@@ -1,13 +1,17 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from .database import database, metadata, engine
 from .routes import router
+
+# Crear tablas si no existen
+metadata.create_all(engine)
 
 app = FastAPI()
 app.include_router(router)
 
-# Templates
-app.templates = Jinja2Templates(directory="templates")
+@app.on_event("startup")
+async def startup():
+    await database.connect()
 
-# Static
-app.mount("/static", StaticFiles(directory="static"), name="static")
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
