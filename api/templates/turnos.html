@@ -2,42 +2,50 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Reservas</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Sistema de Reservas</h1>
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+<div class="container">
+    <h1>SISTEMA DE RESERVAS</h1>
 
-        <form method="post" action="/turnos">
-            <input type="text" name="nombre" placeholder="Nombre" required>
-            <input type="datetime-local" name="fecha_hora" required>
-            <button type="submit">Agregar Turno</button>
-        </form>
+    <!-- Formulario para agregar turno -->
+    <form action="/turnos" method="post">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="text" name="apellido" placeholder="Apellido" required>
+        <input type="time" name="hora" placeholder="Hora" required>
+        <button type="submit">AGREGAR TURNO</button>
+    </form>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Fecha y Hora</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for t in turnos %}
-                <tr>
-                    <td>{{ t.id }}</td>
-                    <td>{{ t.nombre }}</td>
-                    <td>{{ t.fecha_hora }}</td>
-                    <td><a class="delete-btn" href="/turnos/delete/{{ t.id }}">Eliminar</a></td>
-                </tr>
+    <!-- Tabla de turnos -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOMBRE</th>
+                <th>APELLIDO</th>
+                <th>HORA</th>
+                <th>ACCIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for turno in turnos %}
+            <tr>
+                <td>{{ turno.id }}</td>
+                <td>{{ turno.nombre }}</td>
+                <td>{{ turno.apellido }}</td>
+                <td>{{ turno.hora }}</td>
+                <td>
+                    <form action="/turnos/{{ turno.id }}" method="post" style="display:inline;">
+                        <input type="hidden" name="_method" value="delete">
+                        <button class="delete-btn" type="submit">ELIMINAR</button>
+                    </form>
+                </td>
+            </tr>
             {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
