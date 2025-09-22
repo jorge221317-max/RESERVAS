@@ -1,28 +1,20 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from .routes import router
 
-def enviar_mail(destinatario: str, asunto: str, mensaje: str):
-    """
-    Función para enviar un mail sencillo.
-    Configurá con tu SMTP.
-    """
-    remitente = "tucorreo@gmail.com"
-    password = "tu_password"  # Mejor usar variables de entorno
+app = FastAPI(title="API de Reservas 🚀")
 
-    msg = MIMEMultipart()
-    msg['From'] = remitente
-    msg['To'] = destinatario
-    msg['Subject'] = asunto
+# Carpeta static
+app.mount("/static", StaticFiles(directory="api/static"), name="static")
 
-    msg.attach(MIMEText(mensaje, 'plain'))
+# Carpeta templates
+templates = Jinja2Templates(directory="templates")
 
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(remitente, password)
-        server.send_message(msg)
-        server.quit()
-        print(f"Mail enviado a {destinatario}")
-    except Exception as e:
-        print(f"Error enviando mail: {e}")
+# Incluir rutas de API
+app.include_router(router)
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
