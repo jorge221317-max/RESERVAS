@@ -1,37 +1,44 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, Request, Form
 from sqlalchemy.orm import Session
-from .models import Turno, Usuario
-from .utils import enviar_email
+from .database import get_db
+from .models import Turno
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
+templates = Jinja2Templates(directory="api/templates")
 
-def crear_turno(turno_data: dict, db: Session):
-    from datetime import datetime
-    fecha_hora = datetime.fromisoformat(turno_data["fecha_hora"])
-    usuario_id = turno_data["usuario_id"]
+# Listar turnos
+@router.get("/")
+def listar_turnos(request: Request, db: Session = Depends(get_db)):
+    turnos = db.query(Turno).all()
+    return templates.TemplateResponse("turnos.html", {"request": request, "turnos": turnos})
+
+# Crear turno
+@router.post("/turnos")
+def crear_turno(
+    request: Request,
+    nombre: str = Form(...),
+    fecha: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    # Validar duplicados
+    exists = db.query(Turno).filter(Turno.nombre==nombre, Turno.fecha==fecha).first()
+    if exists:
+        turnos = db.query(Turno).all()
+        return templates.TemplateResponse("turnos.html", {"request": request, "turnos": turnos, "error": "Turno ya existente"})
     
-    turno_existente = db.query(Turno).filter(Turno.fecha_hora == fecha_hora).first()
-    if turno_existente:
-        raise HTTPException(status_code=400, detail="Ya existe un turno en esa fecha y hora")
-    
-    nuevo_turno = Turno(fecha_hora=fecha_hora, usuario_id=usuario_id)
-    db.add(nuevo_turno)
+    turno = Turno(nombre=nombre, fecha=fecha)
+    db.add(turno)
     db.commit()
-    db.refresh(nuevo_turno)
+    db.refresh(turno)
+    return RedirectResponse("/", status_code=303)
 
-    usuario = db.query(Usuario).get(usuario_id)
-    if usuario:
-        enviar_email(usuario.email, "Turno confirmado", f"Tu turno es el {fecha_hora}")
-    return nuevo_turno
-
-def listar_turnos(db: Session):
-    return db.query(Turno).all()
-
-@router.delete("/turnos/{turno_id}")
-def eliminar_turno(turno_id: int, db: Session):
-    turno = db.query(Turno).get(turno_id)
-    if not turno:
-        raise HTTPException(status_code=404, detail="Turno no encontrado")
-    db.delete(turno)
-    db.commit()
-    return {"detail": f"Turno {turno_id} eliminado"}
+# Eliminar turno
+@router.get("/turnos/delete/{turno_id}")
+def eliminar_turno(turno_id: int, db: Session = Depends(get_db)):
+    turno = db.query(Turno).filter(Turno.id==turno_id).first()
+    if turno:
+        db.delete(turno)
+        db.commit()
+    return RedirectResponse("/", status_code=303)
