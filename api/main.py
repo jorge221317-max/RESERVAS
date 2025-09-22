@@ -1,51 +1,61 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime
 
-from api.models import Base, Turno  # ✅ Importación correcta
-
-# Configuración de la app
-app = FastAPI()
-
-# Configuración de templates
-templates = Jinja2Templates(directory="templates")
-
-# Base de datos SQLite
-DATABASE_URL = "sqlite:///./reservas.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# --- Configuración de DB (SQLite local) ---
+SQLALCHEMY_DATABASE_URL = "sqlite:///./turnos.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-# Crear tablas
+# --- Modelo de Turnos ---
+class Turno(Base):
+    __tablename__ = "turnos"
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String, index=True)
+    fecha = Column(String, index=True)
+    hora = Column(String, index=True)
+
 Base.metadata.create_all(bind=engine)
 
+# --- App FastAPI ---
+app = FastAPI()
 
 @app.get("/", response_class=HTMLResponse)
-async def leer_turnos(request: Request):
-    """Página principal con la lista de turnos"""
+def home():
     db = SessionLocal()
     turnos = db.query(Turno).all()
     db.close()
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos})
 
+    html = """
+    <h2>📅 Sistema de Turnos</h2>
+    <form method="post" action="/reservar">
+        Nombre: <input type="text" name="nombre" required><br>
+        Fecha: <input type="date" name="fecha" required><br>
+        Hora: <input type="time" name="hora" required><br>
+        <button type="submit">Reservar</button>
+    </form>
+    <br>
+    <h3>Turnos Confirmados</h3>
+    <table border="1" cellpadding="5">
+        <tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Hora</th></tr>
+    """
+    for t in turnos:
+        html += f"<tr><td>{t.id}</td><td>{t.nombre}</td><td>{t.fecha}</td><td>{t.hora}</td></tr>"
+    html += "</table>"
+    return html
 
-@app.post("/reservar")
-async def reservar_turno(
-    nombre: str = Form(...),
-    fecha: str = Form(...),
-    hora: str = Form(...)
-):
-    """Reservar un turno nuevo"""
+@app.post("/reservar", response_class=HTMLResponse)
+def reservar(nombre: str = Form(...), fecha: str = Form(...), hora: str = Form(...)):
     db = SessionLocal()
-    fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
-    nuevo_turno = Turno(nombre=nombre, fecha_hora=fecha_hora)
-
-    db.add(nuevo_turno)
+    nuevo = Turno(nombre=nombre, fecha=fecha, hora=hora)
+    db.add(nuevo)
     db.commit()
-    db.refresh(nuevo_turno)
     db.close()
-
-    return RedirectResponse(url="/", status_code=303)
+    return f"""
+    <h2>✅ Turno confirmado</h2>
+    <p>{nombre} - {fecha} {hora}</p>
+    <a href='/'>Volver</a>
+    """
