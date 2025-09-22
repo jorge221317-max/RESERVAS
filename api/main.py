@@ -4,19 +4,19 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from database import Base, engine, get_db
-from models import Turno
-from routes import listar_turnos, crear_turno
+from .database import Base, engine, get_db
+from .models import Turno
+from .routes import listar_turnos, crear_turno
 
 # Crear tablas si no existen
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Archivos estáticos (css, imágenes, etc.)
+# Archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Templates Jinja2
+# Templates
 templates = Jinja2Templates(directory="templates")
 
 
