@@ -1,30 +1,27 @@
-from fastapi import FastAPI, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-
-from .database import Base, engine, get_db
-from .models import Turno
-from .routes import listar_turnos, crear_turno
-
-# Crear tablas si no existen
-Base.metadata.create_all(bind=engine)
+import os
 
 app = FastAPI()
 
-# Archivos estáticos
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# 🔹 Detecta la ruta base de este archivo (api/)
+BASE_DIR = os.path.dirname(__file__)
 
-# Templates
-templates = Jinja2Templates(directory="templates")
+# 🔹 Monta la carpeta static correctamente
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
+    name="static"
+)
 
+# 🔹 Ejemplo de endpoint raíz
+@app.get("/")
+def read_root():
+    return {"message": "Bienvenido al sistema de reservas 🚀"}
 
-@app.get("/", response_class=HTMLResponse)
-def root(request: Request, db: Session = Depends(get_db)):
-    return listar_turnos(request, db)
-
-
-@app.post("/turnos")
-def add_turno(request: Request, db: Session = Depends(get_db)):
-    return crear_turno(request, db)
+# 🔹 Importar las rutas (si tenés un archivo routes.py)
+try:
+    from . import routes
+    app.include_router(routes.router)
+except ImportError:
+    pass
