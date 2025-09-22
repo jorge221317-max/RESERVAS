@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reservas</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+</head>
+<body>
+    <h1>Reservas de Turnos</h1>
+
+    <form action="/reservar" method="post">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="date" name="fecha" required>
+        <input type="time" name="hora" required>
+        <button type="submit">Reservar</button>
+    </form>
+
+    <h2>Turnos confirmados</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>FECHA</th>
+                <th>HORA</th>
+            </tr>
+        </thead>
+        <tbody id="turnos-table">
+            <!-- Será llenado desde FastAPI -->
+        </tbody>
+    </table>
+
+    <script>
+        async function cargarTurnos() {
+            const res = await fetch("/turnos");
+            const data = await res.json();
+            const tbody = document.getElementById("turnos-table");
+            tbody.innerHTML = "";
+            data.turnos.forEach(t => {
+                const row = `<tr><td>${t.nombre}</td><td>${t.fecha}</td><td>${t.hora}</td></tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+        cargarTurnos();
+    </script>
+</body>
+</html>
