@@ -6,37 +6,44 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Reservas</h1>
-    {% if error %}
-    <p style="color:red">{{ error }}</p>
-    {% endif %}
-    <form method="post" action="/turnos">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="date" name="fecha" required>
-        <button type="submit">Agregar Turno</button>
-    </form>
+    <div class="container">
+        <h1>Sistema de Reservas</h1>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for t in turnos %}
-            <tr>
-                <td>{{ t.id }}</td>
-                <td>{{ t.nombre }}</td>
-                <td>{{ t.fecha }}</td>
-                <td>
-                    <a href="/turnos/delete/{{ t.id }}">Eliminar</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <form method="post" action="/turnos">
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="datetime-local" name="fecha_hora" required>
+            <button type="submit">Agregar Turno</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha y Hora</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for t in turnos %}
+                <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.nombre }}</td>
+                    <td>{{ t.fecha_hora }}</td>
+                    <td><a class="delete-btn" href="/turnos/delete/{{ t.id }}">Eliminar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', () => {
+            setTimeout(() => location.reload(), 200);
+        });
+    </script>
 </body>
 </html>
