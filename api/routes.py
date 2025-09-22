@@ -1,35 +1,45 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Request, Form
 from sqlalchemy.orm import Session
+from datetime import datetime
 from .database import get_db
 from .models import Turno
-from datetime import datetime
 
 router = APIRouter()
 
-# Crear turno con fecha y hora
-@router.post("/turnos/")
-def crear_turno(nombre: str, fecha_hora: str, db: Session = Depends(get_db)):
-    try:
-        dt = datetime.fromisoformat(fecha_hora)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Formato de fecha/hora inválido")
-    turno = Turno(nombre=nombre, fecha_hora=dt)
-    db.add(turno)
+# Crear turno
+@router.post("/agregar_turno/", response_model=None)
+def agregar_turno(
+    request: Request,
+    nombre: str = Form(...),
+    fecha_hora: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    dt = datetime.fromisoformat(fecha_hora)
+    nuevo_turno = Turno(nombre=nombre.upper(), fecha_hora=dt)
+    db.add(nuevo_turno)
     db.commit()
-    db.refresh(turno)
-    return {"message": "Turno creado", "turno": {"id": turno.id, "nombre": turno.nombre, "fecha_hora": turno.fecha_hora}}
+    db.refresh(nuevo_turno)
+    turnos = db.query(Turno).order_by(Turno.fecha_hora).all()
+    from fastapi.templating import Jinja2Templates
+    templates = Jinja2Templates(directory="api/templates")
+    return templates.TemplateResponse("turnos.html", {"request": request, "turnos": turnos})
 
 # Listar turnos
-@router.get("/turnos/")
-def listar_turnos(db: Session = Depends(get_db)):
-    return db.query(Turno).order_by(Turno.fecha_hora).all()
+@router.get("/turnos/", response_model=None)
+def listar_turnos(request: Request, db: Session = Depends(get_db)):
+    turnos = db.query(Turno).order_by(Turno.fecha_hora).all()
+    from fastapi.templating import Jinja2Templates
+    templates = Jinja2Templates(directory="api/templates")
+    return templates.TemplateResponse("turnos.html", {"request": request, "turnos": turnos})
 
 # Eliminar turno
-@router.delete("/turnos/{turno_id}")
-def eliminar_turno(turno_id: int, db: Session = Depends(get_db)):
+@router.post("/eliminar_turno/", response_model=None)
+def eliminar_turno(turno_id: int = Form(...), request: Request = None, db: Session = Depends(get_db)):
     turno = db.query(Turno).filter(Turno.id == turno_id).first()
-    if not turno:
-        raise HTTPException(status_code=404, detail="Turno no encontrado")
-    db.delete(turno)
-    db.commit()
-    return {"message": "Turno eliminado"}
+    if turno:
+        db.delete(turno)
+        db.commit()
+    turnos = db.query(Turno).order_by(Turno.fecha_hora).all()
+    from fastapi.templating import Jinja2Templates
+    templates = Jinja2Templates(directory="api/templates")
+    return templates.TemplateResponse("turnos.html", {"request": request, "turnos": turnos})
