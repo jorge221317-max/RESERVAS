@@ -1,38 +1,37 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Turnos - Sistema de Reservas</title>
-    <style>
-        table { border-collapse: collapse; width: 80%; margin: 20px auto; }
-        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-        th { background-color: #eee; }
-        button { padding: 5px 10px; }
-        form { margin: 20px auto; width: 80%; display: flex; justify-content: space-between; }
-        input { padding: 5px; }
-    </style>
+    <title>Sistema de Reservas</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        async function cancelarTurno(id) {
+            if(!confirm("¿Desea eliminar este turno?")) return;
+            await fetch(`/turnos/${id}`, { method: 'DELETE' });
+            location.reload();
+        }
+    </script>
 </head>
 <body>
-    <h1 style="text-align:center;">Sistema de Turnos</h1>
+    <h1>Sistema de Reservas</h1>
 
-    <form id="formTurno">
-        <input type="number" id="usuario_id" placeholder="ID Usuario" required>
-        <input type="datetime-local" id="fecha_hora" required>
-        <button type="submit">Pedir Turno</button>
+    <form action="/agregar_turno" method="post">
+        <label>Usuario ID: <input type="number" name="usuario_id" required></label>
+        <label>Fecha y Hora: <input type="datetime-local" name="fecha_hora" required></label>
+        <button type="submit">Agregar Turno</button>
     </form>
 
-    <table>
+    <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Fecha y Hora</th>
+                <th>Fecha/Hora</th>
                 <th>Usuario ID</th>
-                <th>Acciones</th>
+                <th>Acción</th>
             </tr>
         </thead>
-        <tbody id="tablaTurnos">
+        <tbody>
             {% for turno in turnos %}
-            <tr id="turno-{{ turno.id }}">
+            <tr>
                 <td>{{ turno.id }}</td>
                 <td>{{ turno.fecha_hora }}</td>
                 <td>{{ turno.usuario_id }}</td>
@@ -41,54 +40,5 @@
             {% endfor %}
         </tbody>
     </table>
-
-<script>
-async function cargarTurnos() {
-    const res = await fetch("/turnos/");
-    const data = await res.json();
-    const tbody = document.getElementById("tablaTurnos");
-    tbody.innerHTML = "";
-    data.forEach(turno => {
-        tbody.innerHTML += `
-        <tr id="turno-${turno.id}">
-            <td>${turno.id}</td>
-            <td>${turno.fecha_hora}</td>
-            <td>${turno.usuario_id}</td>
-            <td><button onclick="cancelarTurno(${turno.id})">Cancelar</button></td>
-        </tr>`;
-    });
-}
-
-document.getElementById("formTurno").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const usuario_id = document.getElementById("usuario_id").value;
-    const fecha_hora = document.getElementById("fecha_hora").value;
-    const res = await fetch("/turnos/", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({usuario_id, fecha_hora})
-    });
-    if(res.ok) {
-        cargarTurnos();
-        document.getElementById("formTurno").reset();
-    } else {
-        const err = await res.json();
-        alert(err.detail || "Error al crear turno");
-    }
-});
-
-async function cancelarTurno(id) {
-    const res = await fetch(`/turnos/${id}`, { method: "DELETE" });
-    if(res.ok) {
-        document.getElementById(`turno-${id}`).remove();
-    } else {
-        const err = await res.json();
-        alert(err.detail || "Error al cancelar turno");
-    }
-}
-
-// Cargar turnos al inicio
-cargarTurnos();
-</script>
 </body>
 </html>
