@@ -1,37 +1,46 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Turnos</title>
-<link rel="stylesheet" href="/static/styles.css">
+    <title>Turnos</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background: #f2e6d9;
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+        }
+        th, td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #d4b996;
+        }
+    </style>
 </head>
 <body>
-<h1>RESERVA DE TURNOS</h1>
-
-{% if mensaje %}
-<p style="color:green">{{ mensaje }}</p>
-{% endif %}
-
-<form action="/reservar" method="post">
-    <input type="text" name="nombre" placeholder="Nombre" required>
-    <input type="datetime-local" name="fecha_hora" required>
-    <button type="submit">Reservar</button>
-</form>
-
-<table>
-    <tr>
-        <th>ID</th>
-        <th>NOMBRE</th>
-        <th>FECHA Y HORA</th>
-    </tr>
-    {% for t in turnos %}
-    <tr>
-        <td>{{ t.id }}</td>
-        <td>{{ t.nombre }}</td>
-        <td>{{ t.fecha_hora }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
+    <h2 style="text-align:center;">LISTA DE TURNOS</h2>
+    <form action="/agregar_turno" method="post" style="text-align:center;">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="datetime-local" name="fecha_hora" required>
+        <button type="submit">AGREGAR TURNO</button>
+    </form>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>NOMBRE</th>
+            <th>FECHA Y HORA</th>
+        </tr>
+        {% for turno in turnos %}
+        <tr>
+            <td>{{ turno[0] }}</td>
+            <td>{{ turno[1] }}</td>
+            <td>{{ turno[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
