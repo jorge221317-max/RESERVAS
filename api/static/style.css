@@ -1,33 +1,22 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #f7f7f7;
-}
-
-h1 {
-    text-align: center;
-}
-
-form {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-input, button {
-    padding: 10px;
-    margin: 5px;
-    font-size: 16px;
+    background-color: #f2e6d9; /* madera clara */
+    padding: 20px;
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
-    text-align: center;
-    background: #deb887; /* fondo tipo madera */
+    width: 100%;
+    background-color: #fff4e6; /* fondo tipo Excel */
 }
 
 th, td {
-    border: 1px solid #000;
-    padding: 10px;
-    text-transform: uppercase;
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    text-transform: uppercase; /* letras en mayúsculas */
+}
+
+th {
+    background-color: #e6d2b5; /* encabezado */
 }
