@@ -1,10 +1,11 @@
 from pydantic import BaseModel
-from datetime import datetime
+from .models import Turno
 
-class TurnoBase(BaseModel):
-    usuario_id: int
-    fecha: datetime
+class TurnoSchema(BaseModel):
+    id: int
+    nombre: str
+    fecha: str
     hora: str
 
     class Config:
-        from_attributes = True  # reemplaza orm_mode = True
+        from_attributes = True
