@@ -1,26 +1,19 @@
-from fastapi import APIRouter, Form
-from typing import List
-from .models import Turno
+from fastapi import APIRouter, Form, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from .models import Turno, database
 
 router = APIRouter()
+templates = Jinja2Templates(directory="api/templates")
 
-# Lista inicial de turnos
-turnos_db = [
-    Turno(id=1, fecha="2025-09-22", hora="10:00"),
-    Turno(id=2, fecha="2025-09-22", hora="11:00"),
-    Turno(id=3, fecha="2025-09-22", hora="12:00"),
-]
+@router.get("/turnos", response_class=HTMLResponse)
+async def ver_turnos(request: Request):
+    query = "SELECT * FROM turnos"
+    turnos = await database.fetch_all(query)
+    return templates.TemplateResponse("turnos.html", {"request": request, "turnos": turnos})
 
-@router.get("/turnos", response_model=List[Turno])
-async def listar_turnos():
-    return turnos_db
-
-@router.post("/turnos/reservar")
-async def reservar_turno(turno_id: int = Form(...)):
-    for turno in turnos_db:
-        if turno.id == turno_id:
-            if turno.reservado:
-                return {"message": "Turno ya reservado ❌"}
-            turno.reservado = True
-            return {"message": "Turno reservado con éxito 🚀"}
-    return {"message": "Turno no encontrado"}
+@router.post("/turnos")
+async def crear_turno(nombre: str = Form(...), fecha: str = Form(...), hora: str = Form(...)):
+    query = "INSERT INTO turnos(nombre, fecha, hora) VALUES (:nombre, :fecha, :hora)"
+    await database.execute(query, values={"nombre": nombre, "fecha": fecha, "hora": hora})
+    return {"message": "Turno creado con éxito"}
