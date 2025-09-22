@@ -7,7 +7,7 @@ from .utils import enviar_email
 
 router = APIRouter()
 
-# Crear usuario
+# Usuarios
 @router.post("/usuarios/", response_model=UsuarioResponse)
 def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db_usuario = db.query(Usuario).filter(Usuario.email == usuario.email).first()
@@ -19,7 +19,7 @@ def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.refresh(nuevo_usuario)
     return nuevo_usuario
 
-# Crear turno con validación de duplicados
+# Turnos
 @router.post("/turnos/", response_model=TurnoResponse)
 def crear_turno(turno: TurnoCreate, db: Session = Depends(get_db)):
     turno_existente = db.query(Turno).filter(Turno.fecha_hora == turno.fecha_hora).first()
@@ -36,13 +36,10 @@ def crear_turno(turno: TurnoCreate, db: Session = Depends(get_db)):
     
     return nuevo_turno
 
-# Listar todos los turnos
 @router.get("/turnos/", response_model=list[TurnoResponse])
 def listar_turnos(db: Session = Depends(get_db)):
-    turnos = db.query(Turno).all()
-    return turnos
+    return db.query(Turno).all()
 
-# Buscar turnos por usuario
 @router.get("/turnos/buscar/", response_model=list[TurnoResponse])
 def buscar_turnos(usuario_id: int = None, db: Session = Depends(get_db)):
     query = db.query(Turno)
@@ -50,7 +47,6 @@ def buscar_turnos(usuario_id: int = None, db: Session = Depends(get_db)):
         query = query.filter(Turno.usuario_id == usuario_id)
     return query.all()
 
-# Eliminar un turno
 @router.delete("/turnos/{turno_id}")
 def eliminar_turno(turno_id: int, db: Session = Depends(get_db)):
     turno = db.query(Turno).get(turno_id)
