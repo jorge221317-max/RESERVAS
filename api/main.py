@@ -1,22 +1,30 @@
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, Request, Depends
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from .database import Base, engine
-from .routes import router
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
+from database import Base, engine, get_db
+from models import Turno
+from routes import listar_turnos, crear_turno
+
+# Crear tablas si no existen
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Sistema de Reservas")
-app.include_router(router)
+app = FastAPI()
 
-# Templates
-templates = Jinja2Templates(directory="api/templates")
+# Archivos estáticos (css, imágenes, etc.)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Static
-app.mount("/static", StaticFiles(directory="api/static"), name="static")
+# Templates Jinja2
+templates = Jinja2Templates(directory="templates")
 
-# Página principal
-@app.get("/", response_model=None)
-def root(request: Request):
-    from .routes import listar_turnos
-    return listar_turnos(request)
+
+@app.get("/", response_class=HTMLResponse)
+def root(request: Request, db: Session = Depends(get_db)):
+    return listar_turnos(request, db)
+
+
+@app.post("/turnos")
+def add_turno(request: Request, db: Session = Depends(get_db)):
+    return crear_turno(request, db)
