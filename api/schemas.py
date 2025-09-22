@@ -11,8 +11,10 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioResponse(UsuarioBase):
     id: int
     rol: str
-    class Config:
-        orm_mode = True
+
+    model_config = {
+        "from_attributes": True  # Pydantic v2 reemplaza 'orm_mode'
+    }
 
 class TurnoBase(BaseModel):
     fecha_hora: datetime
@@ -23,5 +25,7 @@ class TurnoCreate(TurnoBase):
 class TurnoResponse(TurnoBase):
     id: int
     usuario_id: int
-    class Config:
-        orm_mode = True
+
+    model_config = {
+        "from_attributes": True  # Pydantic v2
+    }
