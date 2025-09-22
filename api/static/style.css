@@ -1,31 +1,21 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f2e6d9;
-    text-align: center;
-}
-
-form input, form button {
-    margin: 5px;
-    padding: 8px;
+    background-color: #f3e5ab;
 }
 
 table {
-    margin: 20px auto;
+    width: 100%;
     border-collapse: collapse;
-    width: 80%;
+    background-color: #f5deb3;
 }
 
 th, td {
-    border: 1px solid #8b5a2b;
     padding: 10px;
+    text-align: left;
+    border: 1px solid #8b4513;
 }
 
-th {
-    background-color: #deb887; /* color tipo madera */
-    text-transform: uppercase;
-}
-
-td {
-    background-color: #f5deb3; /* color madera claro */
-    text-transform: uppercase;
+thead {
+    background-color: #deb887;
+    color: #000;
 }
