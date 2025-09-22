@@ -1,4 +1,17 @@
+# FastAPI framework
 fastapi==0.111.1
-uvicorn==0.23.1
-sqlalchemy==2.0.18
+
+# Servidor ASGI
+uvicorn[standard]==0.23.2
+
+# Plantillas Jinja2
 jinja2==3.1.6
+
+# Formularios y archivos
+python-multipart>=0.0.7
+
+# ORM SQLAlchemy (compatible con Python 3.11)
+sqlalchemy==2.0.18
+
+# Base de datos SQLite
+databases[sqlite]==0.9.0
