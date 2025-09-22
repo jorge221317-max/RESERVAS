@@ -1,22 +1,31 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f2e6d9; /* madera clara */
-    padding: 20px;
+    background-color: #f2e6d9;
+    text-align: center;
+}
+
+form input, form button {
+    margin: 5px;
+    padding: 8px;
 }
 
 table {
+    margin: 20px auto;
     border-collapse: collapse;
-    width: 100%;
-    background-color: #fff4e6; /* fondo tipo Excel */
+    width: 80%;
 }
 
 th, td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-    text-transform: uppercase; /* letras en mayúsculas */
+    border: 1px solid #8b5a2b;
+    padding: 10px;
 }
 
 th {
-    background-color: #e6d2b5; /* encabezado */
+    background-color: #deb887; /* color tipo madera */
+    text-transform: uppercase;
+}
+
+td {
+    background-color: #f5deb3; /* color madera claro */
+    text-transform: uppercase;
 }
