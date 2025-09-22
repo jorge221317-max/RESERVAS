@@ -1,31 +1,23 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from datetime import datetime
 
-class UsuarioBase(BaseModel):
+class UsuarioCreate(BaseModel):
     nombre: str
-    email: EmailStr
+    email: str
 
-class UsuarioCreate(UsuarioBase):
-    rol: str = "usuario"
-
-class UsuarioResponse(UsuarioBase):
+class UsuarioResponse(UsuarioCreate):
     id: int
     rol: str
 
-    model_config = {
-        "from_attributes": True  # Pydantic v2 reemplaza 'orm_mode'
-    }
+    class Config:
+        from_attributes = True
 
-class TurnoBase(BaseModel):
+class TurnoCreate(BaseModel):
     fecha_hora: datetime
-
-class TurnoCreate(TurnoBase):
     usuario_id: int
 
-class TurnoResponse(TurnoBase):
+class TurnoResponse(TurnoCreate):
     id: int
-    usuario_id: int
 
-    model_config = {
-        "from_attributes": True  # Pydantic v2
-    }
+    class Config:
+        from_attributes = True
