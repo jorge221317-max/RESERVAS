@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from models import engine, turnos
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from datetime import datetime
-from models import engine, turnos
-from fastapi.templating import Jinja2Templates
 
 app = FastAPI(title="Sistema de Turnos Funcional 🚀")
 templates = Jinja2Templates(directory="templates")
