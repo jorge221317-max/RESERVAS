@@ -1,10 +1,11 @@
-from pydantic import BaseModel
+from sqlalchemy import Table, Column, Integer, String, Date, Time
+from .database import metadata
 
-class Turno(BaseModel):
-    id: int
-    nombre: str
-    fecha: str
-    hora: str
-
-    class Config:
-        from_attributes = True
+turnos = Table(
+    "turnos",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("nombre", String, nullable=False),
+    Column("fecha", String, nullable=False),
+    Column("hora", String, nullable=False),
+)
