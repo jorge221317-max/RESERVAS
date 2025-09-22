@@ -1,0 +1,7 @@
+body { font-family: Arial, sans-serif; padding: 20px; }
+table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+th, td { border: 1px solid #666; padding: 8px; text-align: center; }
+th { background-color: #4CAF50; color: white; }
+tr:nth-child(even) { background-color: #f2f2f2; }
+button { padding: 5px 10px; cursor: pointer; }
+form { margin-bottom: 20px; }
