@@ -1,79 +1,25 @@
-body { 
-    font-family: Arial, sans-serif; 
-    background: #f3f1e7; /* fondo claro tipo madera */
-    color: #333; 
-    margin: 20px; 
+body {
+    background-color: #8B5E3C; /* madera */
+    font-family: Arial, sans-serif;
+    color: #fff;
 }
 
-.container { 
-    max-width: 900px; 
-    margin: auto; 
-    background: #d4c3a8; /* contenedor madera clara */
-    padding: 25px; 
-    border-radius: 12px; 
-    box-shadow: 0 0 20px rgba(0,0,0,0.3); 
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    text-align: center;
 }
 
-h1 { 
-    text-align: center; 
-    color: #4b3621; /* marrón oscuro para contraste */ 
+th, td {
+    padding: 15px;
+    border: 1px solid #fff;
     text-transform: uppercase;
+    font-size: 16px;
 }
 
-input, button { 
-    padding: 12px; 
-    margin: 5px; 
-    border-radius: 6px; 
-    border: 1px solid #aaa; 
-    text-transform: uppercase;
-}
-
-button { 
-    background-color: #6b4f33; 
-    color: white; 
-    border: none; 
-    cursor: pointer; 
-}
-
-button:hover { 
-    background-color: #4b3621; 
-}
-
-.error { 
-    color: #ff4d4d; 
-    text-align: center; 
-}
-
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 20px; 
-    background: #c9b79c; /* madera clara para tabla */
-}
-
-th, td { 
-    padding: 15px; /* celdas más amplias */
-    text-align: center; 
-    border: 1px solid #a68a6b; 
-    text-transform: uppercase; /* letras en mayúsculas */
-}
-
-tr:nth-child(even) { background-color: #e0d8c3; }
-tr:hover { background-color: #d1c1a2; }
-
-th { 
-    background-color: #8b5e3c; 
-    color: white; 
-}
-
-.delete-btn { 
-    color: white; 
-    background-color: #d14343; 
-    padding: 6px 12px; 
-    border-radius: 5px; 
-    text-decoration: none; 
-}
-
-.delete-btn:hover { 
-    background-color: #a83232; 
+input, button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
 }
