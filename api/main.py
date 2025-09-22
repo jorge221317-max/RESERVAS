@@ -1,15 +1,24 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from .routes import router as routes_router
+from .database import database, metadata, engine
+from . import routes
 
 app = FastAPI(title="API de Reservas 🚀")
 
-# Montar carpeta static
+# Monta la carpeta de archivos estáticos
 app.mount("/static", StaticFiles(directory="api/static"), name="static")
 
-# Incluir rutas
-app.include_router(routes_router)
+# Crea tablas si no existen
+metadata.create_all(engine)
 
-@app.get("/")
-async def root():
-    return {"message": "API de Reservas funcionando 🚀"}
+# Incluye rutas
+app.include_router(routes.router)
+
+# Conexión a la DB
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
