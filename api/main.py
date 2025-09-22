@@ -1,24 +1,28 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from .database import database, metadata, engine
-from . import routes
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-app = FastAPI(title="API de Reservas 🚀")
+def enviar_mail(destinatario: str, asunto: str, mensaje: str):
+    """
+    Función para enviar un mail sencillo.
+    Configurá con tu SMTP.
+    """
+    remitente = "tucorreo@gmail.com"
+    password = "tu_password"  # Mejor usar variables de entorno
 
-# Monta la carpeta de archivos estáticos
-app.mount("/static", StaticFiles(directory="api/static"), name="static")
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
 
-# Crea tablas si no existen
-metadata.create_all(engine)
+    msg.attach(MIMEText(mensaje, 'plain'))
 
-# Incluye rutas
-app.include_router(routes.router)
-
-# Conexión a la DB
-@app.on_event("startup")
-async def startup():
-    await database.connect()
-
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(remitente, password)
+        server.send_message(msg)
+        server.quit()
+        print(f"Mail enviado a {destinatario}")
+    except Exception as e:
+        print(f"Error enviando mail: {e}")
