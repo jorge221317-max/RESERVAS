@@ -1,33 +1,26 @@
-from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from datetime import datetime
+from fastapi import APIRouter, Form
+from typing import List
+from .models import Turno
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory="api/templates")
+# Lista inicial de turnos
+turnos_db = [
+    Turno(id=1, fecha="2025-09-22", hora="10:00"),
+    Turno(id=2, fecha="2025-09-22", hora="11:00"),
+    Turno(id=3, fecha="2025-09-22", hora="12:00"),
+]
 
-# Lista de turnos simulada (puede reemplazarse por DB)
-turnos = []
+@router.get("/turnos", response_model=List[Turno])
+async def listar_turnos():
+    return turnos_db
 
-@router.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos})
-
-@router.post("/reservar", response_class=HTMLResponse)
-async def reservar_turno(request: Request, nombre: str = Form(...), fecha: str = Form(...), hora: str = Form(...)):
-    """
-    Recibe datos del formulario y agrega un turno.
-    """
-    try:
-        turno = {
-            "nombre": nombre.upper(),
-            "fecha": fecha,
-            "hora": hora
-        }
-        turnos.append(turno)
-        message = f"Turno reservado para {nombre.upper()} el {fecha} a las {hora} 🚀"
-    except Exception as e:
-        message = f"Error al reservar el turno: {str(e)}"
-
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos, "message": message})
+@router.post("/turnos/reservar")
+async def reservar_turno(turno_id: int = Form(...)):
+    for turno in turnos_db:
+        if turno.id == turno_id:
+            if turno.reservado:
+                return {"message": "Turno ya reservado ❌"}
+            turno.reservado = True
+            return {"message": "Turno reservado con éxito 🚀"}
+    return {"message": "Turno no encontrado"}
