@@ -2,16 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Turnos</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Reservas</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>SISTEMA DE RESERVAS</h1>
+    <h1>RESERVAS DE TURNOS</h1>
 
-    <form action="/agregar_turno/" method="post">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="datetime-local" name="fecha_hora" required>
-        <button type="submit">AGREGAR TURNO</button>
+    <form action="/turnos/nuevo" method="post">
+        <input type="text" name="nombre" placeholder="Nombre completo" required>
+        <input type="date" name="fecha" required>
+        <input type="time" name="hora" required>
+        <button type="submit">Pedir Turno</button>
     </form>
 
     <table>
@@ -19,8 +20,8 @@
             <tr>
                 <th>ID</th>
                 <th>NOMBRE</th>
-                <th>FECHA HORA</th>
-                <th>ELIMINAR</th>
+                <th>FECHA</th>
+                <th>HORA</th>
             </tr>
         </thead>
         <tbody>
@@ -28,13 +29,8 @@
             <tr>
                 <td>{{ turno.id }}</td>
                 <td>{{ turno.nombre }}</td>
-                <td>{{ turno.fecha_hora.strftime("%d/%m/%Y %H:%M") }}</td>
-                <td>
-                    <form action="/eliminar_turno/" method="post">
-                        <input type="hidden" name="turno_id" value="{{ turno.id }}">
-                        <button type="submit">ELIMINAR</button>
-                    </form>
-                </td>
+                <td>{{ turno.fecha }}</td>
+                <td>{{ turno.hora }}</td>
             </tr>
             {% endfor %}
         </tbody>
