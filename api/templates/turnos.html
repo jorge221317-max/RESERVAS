@@ -1,29 +1,24 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Reservas</title>
+    <title>Sistema de Turnos</title>
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-<div class="container">
     <h1>SISTEMA DE RESERVAS</h1>
 
-    <form action="/turnos" method="post">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="text" name="apellido" placeholder="Apellido" required>
-        <input type="time" name="hora" required>
+    <form id="form-turno">
+        <input type="text" id="nombre" placeholder="NOMBRE" required>
+        <input type="datetime-local" id="fecha_hora" required>
         <button type="submit">AGREGAR TURNO</button>
     </form>
 
-    <table>
+    <table id="tabla-turnos">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>NOMBRE</th>
-                <th>APELLIDO</th>
-                <th>HORA</th>
+                <th>FECHA Y HORA</th>
                 <th>ACCIONES</th>
             </tr>
         </thead>
@@ -32,18 +27,48 @@
             <tr>
                 <td>{{ turno.id }}</td>
                 <td>{{ turno.nombre.upper() }}</td>
-                <td>{{ turno.apellido.upper() }}</td>
-                <td>{{ turno.hora }}</td>
-                <td>
-                    <form action="/turnos/{{ turno.id }}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="delete">
-                        <button class="delete-btn" type="submit">ELIMINAR</button>
-                    </form>
-                </td>
+                <td>{{ turno.fecha_hora.strftime("%d/%m/%Y %H:%M") }}</td>
+                <td><button onclick="eliminarTurno({{ turno.id }})">ELIMINAR</button></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-</div>
+
+<script>
+async function fetchTurnos() {
+    const res = await fetch('/turnos/');
+    const data = await res.json();
+    const tbody = document.querySelector('#tabla-turnos tbody');
+    tbody.innerHTML = '';
+    data.forEach(turno => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${turno.id}</td>
+            <td>${turno.nombre.toUpperCase()}</td>
+            <td>${new Date(turno.fecha_hora).toLocaleString()}</td>
+            <td><button onclick="eliminarTurno(${turno.id})">ELIMINAR</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById('form-turno').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nombre = document.getElementById('nombre').value;
+    const fecha_hora = document.getElementById('fecha_hora').value;
+    await fetch('/turnos/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({nombre, fecha_hora})
+    });
+    fetchTurnos();
+});
+
+async function eliminarTurno(id) {
+    await fetch(`/turnos/${id}`, {method:'DELETE'});
+    fetchTurnos();
+}
+</script>
+
 </body>
 </html>
