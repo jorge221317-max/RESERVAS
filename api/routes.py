@@ -1,29 +1,29 @@
-from fastapi import Request, Depends, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy.orm import Session
-from .models import Turno
-from .database import get_db
+from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi import Request
+from .models import Turno
+from .database import SessionLocal
 
-templates = Jinja2Templates(directory="templates")
+router = APIRouter()  # 👈 ESTE es el que faltaba
 
+templates = Jinja2Templates(directory="api/templates")
 
-# Mostrar lista de turnos
-def listar_turnos(request: Request, db: Session):
+@router.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    db = SessionLocal()
     turnos = db.query(Turno).all()
     return templates.TemplateResponse("index.html", {"request": request, "turnos": turnos})
 
-
-# Crear un nuevo turno
-def crear_turno(
-    request: Request,
-    db: Session,
-    nombre: str = Form(...),
-    fecha_hora: str = Form(...)
-):
-    nuevo_turno = Turno(nombre=nombre, fecha_hora=fecha_hora)
-    db.add(nuevo_turno)
+@router.post("/turnos")
+def crear_turno(turno: Turno):
+    db = SessionLocal()
+    db.add(turno)
     db.commit()
-    db.refresh(nuevo_turno)
+    db.refresh(turno)
+    return turno
 
-    return RedirectResponse(url="/", status_code=303)
+@router.get("/turnos")
+def listar_turnos():
+    db = SessionLocal()
+    return db.query(Turno).all()
