@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservas</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>RESERVAS DE TURNOS</h1>
 
-    <form action="/turnos/nuevo" method="post">
-        <input type="text" name="nombre" placeholder="Nombre completo" required>
+    <form action="/turnos/" method="post">
+        <input type="text" name="nombre" placeholder="NOMBRE" required>
         <input type="date" name="fecha" required>
         <input type="time" name="hora" required>
-        <button type="submit">Pedir Turno</button>
+        <button type="submit">AGREGAR TURNO</button>
     </form>
 
     <table>
