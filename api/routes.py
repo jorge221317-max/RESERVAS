@@ -1,33 +1,24 @@
-from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from sqlalchemy import insert, select
-from databases import Database
-from .models import turnos
+from fastapi import APIRouter, Request, Form
+from fastapi.responses import RedirectResponse
+from .models import Turno, SessionLocal
+import datetime
 
 router = APIRouter()
-templates = Jinja2Templates(directory="api/templates")
-db = Database("sqlite:///turnos.db")
 
-@router.on_event("startup")
-async def startup():
-    await db.connect()
-    # Crear tabla si no existe
-    query = "CREATE TABLE IF NOT EXISTS turnos (id INTEGER PRIMARY KEY, nombre TEXT, fecha TEXT, hora TEXT)"
-    await db.execute(query)
+@router.get("/turnos")
+async def listar_turnos(request: Request):
+    db = SessionLocal()
+    turnos = db.query(Turno).all()
+    db.close()
+    return {"turnos": [{"id": t.id, "nombre": t.nombre, "fecha_hora": t.fecha_hora} for t in turnos]}
 
-@router.on_event("shutdown")
-async def shutdown():
-    await db.disconnect()
-
-@router.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    query = turnos.select()
-    lista_turnos = await db.fetch_all(query)
-    return templates.TemplateResponse("index.html", {"request": request, "turnos": lista_turnos})
-
-@router.post("/agregar")
-async def agregar_turno(nombre: str = Form(...), fecha: str = Form(...), hora: str = Form(...)):
-    query = insert(turnos).values(nombre=nombre, fecha=fecha, hora=hora)
-    await db.execute(query)
-    return {"message": "Turno agregado con éxito"}
+@router.post("/turnos")
+async def agregar_turno(nombre: str = Form(...), fecha_hora: str = Form(...)):
+    db = SessionLocal()
+    dt = datetime.datetime.fromisoformat(fecha_hora)
+    nuevo_turno = Turno(nombre=nombre, fecha_hora=dt)
+    db.add(nuevo_turno)
+    db.commit()
+    db.refresh(nuevo_turno)
+    db.close()
+    return RedirectResponse(url="/", status_code=303)
