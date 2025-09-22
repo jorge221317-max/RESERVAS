@@ -2,38 +2,104 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reservas</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Reservas de Turnos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('/static/img/madera.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        form {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #2e7d32;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #1b5e20;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-transform: uppercase;
+        }
+        th, td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #8d6e63;
+            color: white;
+        }
+        td {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .message {
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
     <h1>RESERVAS DE TURNOS</h1>
+    <div class="container">
+        {% if message %}
+            <div class="message">{{ message }}</div>
+        {% endif %}
 
-    <form action="/turnos/" method="post">
-        <input type="text" name="nombre" placeholder="NOMBRE" required>
-        <input type="date" name="fecha" required>
-        <input type="time" name="hora" required>
-        <button type="submit">AGREGAR TURNO</button>
-    </form>
+        <form action="/reservar" method="post">
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="date" name="fecha" required>
+            <input type="time" name="hora" required>
+            <button type="submit">Reservar Turno</button>
+        </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>NOMBRE</th>
-                <th>FECHA</th>
-                <th>HORA</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for turno in turnos %}
-            <tr>
-                <td>{{ turno.id }}</td>
-                <td>{{ turno.nombre }}</td>
-                <td>{{ turno.fecha }}</td>
-                <td>{{ turno.hora }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for turno in turnos %}
+                <tr>
+                    <td>{{ turno.nombre }}</td>
+                    <td>{{ turno.fecha }}</td>
+                    <td>{{ turno.hora }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
